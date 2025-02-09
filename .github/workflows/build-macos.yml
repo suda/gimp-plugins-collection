@@ -1,0 +1,54 @@
+name: Build macOS
+
+on:
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - '**.md'
+  pull_request:
+    branches: [ main ]
+    paths-ignore:
+      - '**.md'
+
+jobs:
+  build:
+    runs-on: macos-latest
+    
+    env:
+      TARGET_PLUGIN: ${{ matrix.plugin }}
+    
+    strategy:
+      matrix:
+        plugin: [GMIC, LiquidRescale, NUFraw, PhFGimp, ResynthesizerPlugin]
+        
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install dependencies
+        run: |
+          brew update
+          brew install ccache
+          
+      - name: Setup ccache
+        run: |
+          echo "/usr/local/opt/ccache/libexec" >> $GITHUB_PATH
+          
+      - name: Build plugin
+        run: bash ./travis/build-osx.sh
+        
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.TARGET_PLUGIN }}-macos
+          path: |
+            *.tgz
+            *.hash
+            
+      - name: Upload to releases
+        if: github.ref == 'refs/heads/main'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          wget -c https://github.com/aferrero2707/uploadtool/raw/master/upload_rotate.sh
+          bash ./upload_rotate.sh "continuous" *.tgz
+          bash ./upload_rotate.sh "continuous" *.hash

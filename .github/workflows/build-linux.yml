@@ -1,0 +1,52 @@
+name: Build Linux
+
+on:
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - '**.md'
+  pull_request:
+    branches: [ main ]
+    paths-ignore:
+      - '**.md'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    env:
+      TARGET_PLUGIN: ${{ matrix.plugin }}
+    
+    strategy:
+      matrix:
+        plugin: [GMIC, LiquidRescale, NUFraw, PhFGimp, ResynthesizerPlugin]
+        
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Build in Docker
+        run: |
+          docker run -v $(pwd):/sources \
+            -e TARGET_PLUGIN="${TARGET_PLUGIN}" \
+            photoflow/docker-centos7-gimp \
+            bash /sources/travis/build-linux.sh
+            
+      - name: List outputs
+        run: ls -lh out/*.*
+        
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.TARGET_PLUGIN }}-linux
+          path: |
+            out/*.AppImage
+            out/*.hash
+            
+      - name: Upload to releases
+        if: github.ref == 'refs/heads/main'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          wget -c https://github.com/aferrero2707/uploadtool/raw/master/upload_rotate.sh
+          bash ./upload_rotate.sh "continuous" out/*.AppImage
+          bash ./upload_rotate.sh "continuous" out/*.hash
