@@ -8,7 +8,7 @@ echo "... done"
 
 mkdir -p build && cd build
 if [ -n "$GITHUB_ACTIONS" ]; then
-	brew reinstall little-cms2 openexr gettext intltool json-c json-glib glib-networking gexiv2 librsvg poppler gtk+ py2cairo pygtk gtk-mac-integration || exit 1
+	brew reinstall little-cms2 openexr gettext intltool json-c json-glib glib-networking gexiv2 librsvg poppler gtk+ py3cairo pygtk gtk-mac-integration || exit 1
 fi
 
 ls /usr/local/opt
