@@ -73,7 +73,7 @@ sed -i 's|-Ofast|-O3|g' gmic_qt.pro
 
 echo "Compiling the Qt plug-in"
 qmake QMAKE_CFLAGS+="${CFLAGS} -O2" QMAKE_CXXFLAGS+="${CXXFLAGS} -O2" QMAKE_LFLAGS+="${LDFLAGS} -L/usr/X11/lib -lX11 " CONFIG+=Release HOST=gimp GMIC_PATH=gmic-clone/src || exit 1
-bash "$TRAVIS_BUILD_DIR/travis/travis_wait.sh" &
+bash "$GITHUB_WORKSPACE/scripts/wait.sh" &
 (make -j 3 && make -j 3 install) || exit 1
 
 cp -a gmic_gimp_qt.app/Contents/MacOS/gmic_gimp_qt ../../plugins

@@ -29,7 +29,7 @@ jobs:
           docker run -v $(pwd):/sources \
             -e TARGET_PLUGIN="${TARGET_PLUGIN}" \
             photoflow/docker-centos7-gimp \
-            bash /sources/travis/build-linux.sh
+            bash /sources/scripts/build-linux.sh
             
       - name: List outputs
         run: ls -lh out/*.*

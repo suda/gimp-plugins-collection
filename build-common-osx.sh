@@ -7,7 +7,7 @@ tar xf osx-cache.tgz || exit 1
 echo "... done"
 
 mkdir -p build && cd build
-if [ -n "$TRAVIS" ]; then
+if [ -n "$GITHUB_ACTIONS" ]; then
 	brew reinstall little-cms2 openexr gettext intltool json-c json-glib glib-networking gexiv2 librsvg poppler gtk+ py2cairo pygtk gtk-mac-integration || exit 1
 fi
 

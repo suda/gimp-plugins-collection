@@ -34,7 +34,7 @@ jobs:
           echo "/usr/local/opt/ccache/libexec" >> $GITHUB_PATH
           
       - name: Build plugin
-        run: bash ./travis/build-osx.sh
+        run: bash ./scripts/build-osx.sh
         
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
